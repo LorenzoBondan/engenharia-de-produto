@@ -1,0 +1,4 @@
+package br.com.todeschini.domain.business.publico.categoriacomponente.api;
+
+public interface CategoriaComponenteService extends BuscarCategoriaComponente, CriarCategoriaComponente, AlterarCategoriaComponente, RemoverCategoriaComponente, InativarCategoriaComponente, BuscarHistoricoCategoriaComponente, SubstituirCategoriaComponentePorVersaoAntiga {
+}
