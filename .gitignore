@@ -1,0 +1,11 @@
+# Claude Code
+.claude/
+CLAUDE.md
+
+# Kiro Spec-Driven Development
+.kiro/
+
+# Test Coverage
+frontend/coverage/
+
+.idea/

@@ -1,0 +1,350 @@
+@startuml
+left to right direction
+skinparam linetype ortho
+skinparam classAttributeIconSize 0
+
+enum DSituacaoEnum {
+  - ATIVO
+  - INATIVO
+  - LIXEIRA
+}
+
+enum DTipoFilhoEnum {
+  - MDP
+  - MDF
+  - ALUMINIO
+  - FUNDO
+}
+
+enum DTipoMaterialEnum {
+   - CHAPA_MDP
+   - CHAPA_MDF
+   - FITA_BORDA
+   - COLA
+   - CANTONEIRA
+   - TNT
+   - POLIETILENO
+   - PLASTICO
+   - PINTURA
+   - PINTURA_DE_BORDA_DE_FUNDO
+   - POLIESTER
+   - BAGUETE
+}
+
+enum DTipoPinturaEnum {
+  - ACETINADA
+  - ALTO_BRILHO
+  - ACETINADA_VIDRO
+}
+
+class DAcessorio {
+  - codigo: Integer
+  - valor: Double
+  - implantacao: LocalDate
+  - descricao: String
+  - situacao: DSituacaoEnum
+  - medidas: DMedidas
+  - cor: DCor
+  + validar(): void
+}
+class DAcessorioUsado {
+  - valor: Double
+  - filho: DFilho
+  - acessorio: DAcessorio
+  - quantidade: Integer
+  - codigo: Integer
+  - situacao: DSituacaoEnum
+  - unidadeMedida: String
+  + validar(): void
+  + calcularValor(): Double
+}
+class DBaguete {
+  + validar(): void
+}
+class DBagueteUsado {
+  + validar(): void
+  + calcularQuantidadeLiquida(): Double
+}
+class DCantoneira {
+  + validar(): void
+}
+class DCantoneiraUsada {
+  + calcularQuantidadeLiquida(): Double
+  + validar(): void
+}
+class DCategoriaComponente {
+  - codigo: Integer
+  - situacao: DSituacaoEnum
+  - descricao: String
+  + validar(): void
+}
+class DChapa {
+  - espessura: Integer
+  - faces: Integer
+  + validar(): void
+}
+class DChapaUsada {
+  + validar(): void
+  + calcularQuantidadeLiquida(): Double
+}
+class DCola {
+  - gramatura: Double
+  + validar(): void
+}
+class DColaUsada {
+  + validar(): void
+  + calcularQuantidadeLiquida(): Double
+}
+class DCor {
+  - descricao: String
+  - codigo: Integer
+  - situacao: DSituacaoEnum
+  - hexa: String
+  + validar(): void
+}
+class DFilho {
+  - medidas: DMedidas
+  - implantacao: LocalDate
+  - cor: DCor
+  - valor: Double
+  - materiaisUsados: List<DMaterialUsado>
+  - codigo: Integer
+  - filhos: List<DFilho>
+  - tipo: DTipoFilhoEnum
+  - situacao: DSituacaoEnum
+  - pai: DPai
+  - descricao: String
+  - roteiro: DRoteiro
+  - acessoriosUsados: List<DAcessorioUsado>
+  - unidadeMedida: String
+  + validar(): void
+  + calcularValor(): Double
+}
+class DFitaBorda {
+  - espessura: Integer
+  - altura: Integer
+  + validar(): void
+}
+class DFitaBordaUsada {
+  + validar(): void
+  + calcularQuantidadeLiquida(): Double
+}
+class DGrupoMaquina {
+  - nome: String
+  - codigo: Integer
+  - situacao: DSituacaoEnum
+  + validar(): void
+}
+class DLixeira {
+  - nometabela: String
+  - data: LocalDateTime
+  - usuario: String
+  - id: Integer
+  - situacao: DSituacaoEnum
+  - entidadeid: Map<String, Object>
+  - tabela: String
+}
+class DMaquina {
+  - nome: String
+  - valor: Double
+  - codigo: Integer
+  - formula: String
+  - grupoMaquina: DGrupoMaquina
+  - situacao: DSituacaoEnum
+  + validar(): void
+}
+class DMaterial {
+  - cor: DCor
+  - valor: Double
+  - codigo: Integer
+  - descricao: String
+  - implantacao: LocalDate
+  - porcentagemPerda: Double
+  - tipoMaterial: DTipoMaterialEnum
+  - situacao: DSituacaoEnum
+  + validar(): void
+}
+class DMaterialUsado {
+  - filho: DFilho
+  - quantidadeLiquida: Double
+  - valor: Double
+  - material: DMaterial
+  - codigo: Integer
+  - quantidadeBruta: Double
+  - situacao: DSituacaoEnum
+  - unidadeMedida: String
+  + calcularQuantidadeBruta(): void
+  + calcularQuantidadeLiquida(): Double
+  + calcularValor(): Double
+  + validar(): void
+}
+class DMedidas {
+  - altura: Integer
+  - espessura: Integer
+  - codigo: Integer
+  - largura: Integer
+  - situacao: DSituacaoEnum
+  + validar(): void
+}
+class DModelo {
+  - codigo: Integer
+  - situacao: DSituacaoEnum
+  - descricao: String
+  + validar(): void
+}
+class DPai {
+  - codigo: Integer
+  - tipoPintura: DTipoPinturaEnum
+  - bordasLargura: Integer
+  - tntUmaFace: Boolean
+  - plasticoAcima: Boolean
+  - modelo: DModelo
+  - categoriaComponente: DCategoriaComponente
+  - filhos: List<DFilho>
+  - numeroCantoneiras: Integer
+  - faces: Integer
+  - descricao: String
+  - bordasComprimento: Integer
+  - situacao: DSituacaoEnum
+  - larguraPlastico: Integer
+  - plasticoAdicional: Double
+  - especial: Boolean
+  + gerarDescricao(): void
+  + validar(): void
+}
+class DPintura {
+  - tipoPintura: DTipoPinturaEnum
+  + validar(): void
+}
+class DPinturaBordaFundo {
+  + validar(): void
+}
+class DPinturaBordaFundoUsada {
+  + calcularQuantidadeLiquida(): Double
+  + validar(): void
+}
+class DPinturaUsada {
+  + calcularQuantidadeLiquida(): Double
+  + validar(): void
+}
+class DPlastico {
+  - gramatura: Double
+  + validar(): void
+}
+class DPlasticoUsado {
+  + validar(): void
+  + calcularQuantidadeLiquida(): Double
+}
+class DPoliester {
+  + validar(): void
+}
+class DPoliesterUsado {
+  + validar(): void
+  + calcularQuantidadeLiquida(): Double
+}
+class DPolietileno {
+  + validar(): void
+}
+class DPolietilenoUsado {
+  + calcularQuantidadeLiquida(): Double
+  + validar(): void
+}
+class DRole {
+  - id: Integer
+  - authority: String
+  + validate(): void
+}
+class DRoteiro {
+  - dataFinal: LocalDate
+  - valor: Double
+  - situacao: DSituacaoEnum
+  - codigo: Integer
+  - roteiroMaquinas: List<DRoteiroMaquina>
+  - descricao: String
+  - implantacao: LocalDate
+  + calcularValor(): Double
+  + validar(): void
+}
+class DRoteiroMaquina {
+  - codigo: Integer
+  - roteiro: DRoteiro
+  - tempoMaquina: Double
+  - situacao: DSituacaoEnum
+  - unidadeMedida: String
+  - maquina: DMaquina
+  - tempoHomem: Double
+  + calcularValorMaquina(): Double
+  + calcularValorHomem(): Double
+  + validar(): void
+  + calcularTempo(Integer, Integer, Integer): void
+}
+class DTHistory {
+  - operation: String
+  - schemaname: String
+  - diff: Map<String, Object>
+  - tabname: String
+  - id: Integer
+  - tstamp: LocalDateTime
+  - oldVal: Map<String, Object>
+}
+class DTnt {
+  + validar(): void
+}
+class DTntUsado {
+  + calcularQuantidadeLiquida(): Double
+  + validar(): void
+}
+class DUser {
+  - roles: List<DRole>
+  - situacao: DSituacaoEnum
+  - id: Integer
+  - name: String
+  - password: String
+  - email: String
+  + validate(): void
+}
+
+DAcessorio              "1" *-[#595959,plain]-> "cor\n1" DCor                    
+DAcessorio              "1" *-[#595959,plain]-> "medidas\n1" DMedidas                
+DAcessorioUsado         "1" *-[#595959,plain]-> "acessorio\n1" DAcessorio              
+DAcessorioUsado         "1" *-[#595959,plain]-> "filho\n1" DFilho                  
+DBaguete                 -[#000082,plain]-^  DMaterial               
+DBagueteUsado            -[#000082,plain]-^  DMaterialUsado          
+DCantoneira              -[#000082,plain]-^  DMaterial               
+DCantoneiraUsada         -[#000082,plain]-^  DMaterialUsado          
+DChapa                   -[#000082,plain]-^  DMaterial               
+DChapaUsada              -[#000082,plain]-^  DMaterialUsado          
+DCola                    -[#000082,plain]-^  DMaterial               
+DColaUsada               -[#000082,plain]-^  DMaterialUsado          
+DFilho                  "1" *-[#595959,plain]-> "acessoriosUsados\n*" DAcessorioUsado         
+DFilho                  "1" *-[#595959,plain]-> "cor\n1" DCor                    
+DFilho                  "1" *-[#595959,plain]-> "materiaisUsados\n*" DMaterialUsado          
+DFilho                  "1" *-[#595959,plain]-> "medidas\n1" DMedidas                
+DFilho                  "1" *-[#595959,plain]-> "pai\n1" DPai                    
+DFilho                  "1" *-[#595959,plain]-> "roteiro\n1" DRoteiro                
+DFitaBorda               -[#000082,plain]-^  DMaterial               
+DFitaBordaUsada          -[#000082,plain]-^  DMaterialUsado          
+DMaquina                "1" *-[#595959,plain]-> "grupoMaquina\n1" DGrupoMaquina           
+DMaterial               "1" *-[#595959,plain]-> "cor\n1" DCor                    
+DMaterialUsado          "1" *-[#595959,plain]-> "filho\n1" DFilho                  
+DMaterialUsado          "1" *-[#595959,plain]-> "material\n1" DMaterial               
+DPai                    "1" *-[#595959,plain]-> "categoriaComponente\n1" DCategoriaComponente    
+DPai                    "1" *-[#595959,plain]-> "filhos\n*" DFilho                  
+DPai                    "1" *-[#595959,plain]-> "modelo\n1" DModelo                 
+DPintura                 -[#000082,plain]-^  DMaterial               
+DPinturaBordaFundo       -[#000082,plain]-^  DMaterial               
+DPinturaBordaFundoUsada  -[#000082,plain]-^  DMaterialUsado          
+DPinturaUsada            -[#000082,plain]-^  DMaterialUsado          
+DPlastico                -[#000082,plain]-^  DMaterial               
+DPlasticoUsado           -[#000082,plain]-^  DMaterialUsado          
+DPoliester               -[#000082,plain]-^  DMaterial               
+DPoliesterUsado          -[#000082,plain]-^  DMaterialUsado          
+DPolietileno             -[#000082,plain]-^  DMaterial               
+DPolietilenoUsado        -[#000082,plain]-^  DMaterialUsado          
+DRoteiro                "1" *-[#595959,plain]-> "roteiroMaquinas\n*" DRoteiroMaquina         
+DRoteiroMaquina         "1" *-[#595959,plain]-> "maquina\n1" DMaquina                
+DRoteiroMaquina         "1" *-[#595959,plain]-> "roteiro\n1" DRoteiro                
+DTnt                     -[#000082,plain]-^  DMaterial               
+DTntUsado                -[#000082,plain]-^  DMaterialUsado          
+DUser                   "1" *-[#595959,plain]-> "roles\n*" DRole
+@enduml

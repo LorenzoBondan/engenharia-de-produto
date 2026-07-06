@@ -1,0 +1,45 @@
+# Git
+.git
+.gitignore
+.gitattributes
+
+# IDE
+.idea
+.vscode
+*.iml
+*.swp
+*.swo
+
+# Node
+frontend/node_modules
+frontend/dist
+frontend/.env
+frontend/.env.local
+
+# Maven
+productengineering/**/target
+productengineering/**/.mvn
+productengineering/**/mvnw
+productengineering/**/mvnw.cmd
+
+# Logs
+*.log
+logs/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Docker
+Dockerfile*
+docker-compose*.yml
+.dockerignore
+
+# Docs
+*.md
+.kiro/
+TCC-*.md
+
+# Outros
+.editorconfig
+.prettierrc
