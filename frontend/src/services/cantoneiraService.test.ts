@@ -1,0 +1,656 @@
+import { describe, it, expect, beforeEach, vi } from 'vitest';
+import * as cantoneiraService from './cantoneiraService';
+import * as requests from '../utils/requests';
+import { createMockAxiosResponse } from '../tests/helpers/mockFactories';
+import { createMockCantoneira } from '../tests/helpers/serviceMockFactories';
+
+
+vi.mock('../utils/requests');
+
+const mockCantoneira = createMockCantoneira();
+
+describe('CantoneiraService', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  describe('pesquisarTodos', () => {
+    it('should send GET request to /api/cantoneira', async () => {
+      vi.mocked(requests.requestBackend).mockResolvedValue(createMockAxiosResponse([]));
+
+      await cantoneiraService.pesquisarTodos('codigo,descricao', '=,LIKE', '1,test');
+
+      expect(requests.requestBackend).toHaveBeenCalledWith(
+        expect.objectContaining({
+          method: 'GET',
+          url: '/api/cantoneira',
+        })
+      );
+    });
+
+    it('should include colunas, operacoes, valores in params', async () => {
+      vi.mocked(requests.requestBackend).mockResolvedValue(createMockAxiosResponse([]));
+
+      await cantoneiraService.pesquisarTodos('codigo,descricao', '=,LIKE', '1,test');
+
+      expect(requests.requestBackend).toHaveBeenCalledWith(
+        expect.objectContaining({
+          params: expect.objectContaining({
+            colunas: 'codigo,descricao',
+            operacoes: '=,LIKE',
+            valores: '1,test',
+          }),
+        })
+      );
+    });
+
+    it('should use default sort "codigo;d" when not provided', async () => {
+      vi.mocked(requests.requestBackend).mockResolvedValue(createMockAxiosResponse([]));
+
+      await cantoneiraService.pesquisarTodos('codigo', '=', '1');
+
+      expect(requests.requestBackend).toHaveBeenCalledWith(
+        expect.objectContaining({
+          params: expect.objectContaining({
+            sort: 'codigo;d',
+          }),
+        })
+      );
+    });
+
+    it('should use custom sort when provided', async () => {
+      vi.mocked(requests.requestBackend).mockResolvedValue(createMockAxiosResponse([]));
+
+      await cantoneiraService.pesquisarTodos('codigo', '=', '1', undefined, undefined, 'descricao;a');
+
+      expect(requests.requestBackend).toHaveBeenCalledWith(
+        expect.objectContaining({
+          params: expect.objectContaining({
+            sort: 'descricao;a',
+          }),
+        })
+      );
+    });
+
+    it('should include page and pageSize when provided', async () => {
+      vi.mocked(requests.requestBackend).mockResolvedValue(createMockAxiosResponse([]));
+
+      await cantoneiraService.pesquisarTodos('codigo', '=', '1', 0, 20);
+
+      expect(requests.requestBackend).toHaveBeenCalledWith(
+        expect.objectContaining({
+          params: expect.objectContaining({
+            page: 0,
+            pageSize: 20,
+          }),
+        })
+      );
+    });
+
+    it('should set withCredentials to true', async () => {
+      vi.mocked(requests.requestBackend).mockResolvedValue(createMockAxiosResponse([]));
+
+      await cantoneiraService.pesquisarTodos('codigo', '=', '1');
+
+      expect(requests.requestBackend).toHaveBeenCalledWith(
+        expect.objectContaining({
+          withCredentials: true,
+        })
+      );
+    });
+
+    it('should handle multiple search columns', async () => {
+      vi.mocked(requests.requestBackend).mockResolvedValue(createMockAxiosResponse([]));
+
+      await cantoneiraService.pesquisarTodos('codigo,descricao,tipo', '=,LIKE,=', '1,test,A');
+
+      expect(requests.requestBackend).toHaveBeenCalledWith(
+        expect.objectContaining({
+          params: expect.objectContaining({
+            colunas: 'codigo,descricao,tipo',
+            operacoes: '=,LIKE,=',
+            valores: '1,test,A',
+          }),
+        })
+      );
+    });
+
+    it('should handle pagination with different page sizes', async () => {
+      vi.mocked(requests.requestBackend).mockResolvedValue(createMockAxiosResponse([]));
+
+      await cantoneiraService.pesquisarTodos('codigo', '=', '1', 2, 50);
+
+      expect(requests.requestBackend).toHaveBeenCalledWith(
+        expect.objectContaining({
+          params: expect.objectContaining({
+            page: 2,
+            pageSize: 50,
+          }),
+        })
+      );
+    });
+
+    it('should return response data', async () => {
+      const mockData = [{ codigo: 1, descricao: 'Cantoneira Test' }];
+      vi.mocked(requests.requestBackend).mockResolvedValue(createMockAxiosResponse(mockData));
+
+      const result = await cantoneiraService.pesquisarTodos('codigo', '=', '1');
+
+      expect(result.data).toEqual(mockData);
+    });
+  });
+
+  describe('pesquisarPorId', () => {
+    it('should send GET request to /api/cantoneira/:id', async () => {
+      vi.mocked(requests.requestBackend).mockResolvedValue(createMockAxiosResponse({}));
+
+      await cantoneiraService.pesquisarPorId(123);
+
+      expect(requests.requestBackend).toHaveBeenCalledWith(
+        expect.objectContaining({
+          url: '/api/cantoneira/123',
+        })
+      );
+    });
+
+    it('should set withCredentials to true', async () => {
+      vi.mocked(requests.requestBackend).mockResolvedValue(createMockAxiosResponse({}));
+
+      await cantoneiraService.pesquisarPorId(123);
+
+      expect(requests.requestBackend).toHaveBeenCalledWith(
+        expect.objectContaining({
+          withCredentials: true,
+        })
+      );
+    });
+
+    it('should handle different cantoneira IDs', async () => {
+      vi.mocked(requests.requestBackend).mockResolvedValue(createMockAxiosResponse({}));
+
+      await cantoneiraService.pesquisarPorId(999);
+
+      expect(requests.requestBackend).toHaveBeenCalledWith(
+        expect.objectContaining({
+          url: '/api/cantoneira/999',
+        })
+      );
+    });
+
+    it('should return cantoneira data', async () => {
+      vi.mocked(requests.requestBackend).mockResolvedValue(createMockAxiosResponse(mockCantoneira));
+
+      const result = await cantoneiraService.pesquisarPorId(123);
+
+      expect(result.data).toEqual(mockCantoneira);
+    });
+  });
+
+  describe('pesquisarHistorico', () => {
+    it('should send GET request to /api/cantoneira/historico', async () => {
+      vi.mocked(requests.requestBackend).mockResolvedValue(createMockAxiosResponse([]));
+
+      await cantoneiraService.pesquisarHistorico(123);
+
+      expect(requests.requestBackend).toHaveBeenCalledWith(
+        expect.objectContaining({
+          method: 'GET',
+          url: '/api/cantoneira/historico',
+        })
+      );
+    });
+
+    it('should include codigo in params', async () => {
+      vi.mocked(requests.requestBackend).mockResolvedValue(createMockAxiosResponse([]));
+
+      await cantoneiraService.pesquisarHistorico(456);
+
+      expect(requests.requestBackend).toHaveBeenCalledWith(
+        expect.objectContaining({
+          params: {
+            codigo: 456,
+          },
+        })
+      );
+    });
+
+    it('should set withCredentials to true', async () => {
+      vi.mocked(requests.requestBackend).mockResolvedValue(createMockAxiosResponse([]));
+
+      await cantoneiraService.pesquisarHistorico(123);
+
+      expect(requests.requestBackend).toHaveBeenCalledWith(
+        expect.objectContaining({
+          withCredentials: true,
+        })
+      );
+    });
+
+    it('should return historical data', async () => {
+      const mockHistory = [{ codigo: 1, data: '2024-01-01', usuario: 'user1' }];
+      vi.mocked(requests.requestBackend).mockResolvedValue(createMockAxiosResponse(mockHistory));
+
+      const result = await cantoneiraService.pesquisarHistorico(123);
+
+      expect(result.data).toEqual(mockHistory);
+    });
+  });
+
+  describe('pesquisarAtributosEditaveisEmLote', () => {
+    it('should send GET request to /api/cantoneira/atributoseditaveisemlote', async () => {
+      vi.mocked(requests.requestBackend).mockResolvedValue(createMockAxiosResponse([]));
+
+      await cantoneiraService.pesquisarAtributosEditaveisEmLote();
+
+      expect(requests.requestBackend).toHaveBeenCalledWith(
+        expect.objectContaining({
+          url: '/api/cantoneira/atributoseditaveisemlote',
+        })
+      );
+    });
+
+    it('should set withCredentials to true', async () => {
+      vi.mocked(requests.requestBackend).mockResolvedValue(createMockAxiosResponse([]));
+
+      await cantoneiraService.pesquisarAtributosEditaveisEmLote();
+
+      expect(requests.requestBackend).toHaveBeenCalledWith(
+        expect.objectContaining({
+          withCredentials: true,
+        })
+      );
+    });
+
+    it('should return editable attributes list', async () => {
+      const mockAttributes = ['descricao', 'tipo', 'unidade'];
+      vi.mocked(requests.requestBackend).mockResolvedValue(createMockAxiosResponse(mockAttributes));
+
+      const result = await cantoneiraService.pesquisarAtributosEditaveisEmLote();
+
+      expect(result.data).toEqual(mockAttributes);
+    });
+  });
+
+  describe('criar', () => {
+    it('should send POST request to /api/cantoneira', async () => {
+      vi.mocked(requests.requestBackend).mockResolvedValue(createMockAxiosResponse(mockCantoneira));
+
+      await cantoneiraService.criar(mockCantoneira);
+
+      expect(requests.requestBackend).toHaveBeenCalledWith(
+        expect.objectContaining({
+          method: 'POST',
+          url: '/api/cantoneira',
+        })
+      );
+    });
+
+    it('should include cantoneira data in request body', async () => {
+      const mock = createMockCantoneira({ descricao: 'New Cantoneira' });
+
+      vi.mocked(requests.requestBackend).mockResolvedValue(createMockAxiosResponse(mock));
+
+      await cantoneiraService.criar(mock);
+
+      expect(requests.requestBackend).toHaveBeenCalledWith(
+        expect.objectContaining({
+          data: mock,
+        })
+      );
+    });
+
+    it('should set withCredentials to true', async () => {
+      const mock = createMockCantoneira({ descricao: 'New Cantoneira' });
+
+      vi.mocked(requests.requestBackend).mockResolvedValue(createMockAxiosResponse(mock));
+
+      await cantoneiraService.criar(mock);
+
+      expect(requests.requestBackend).toHaveBeenCalledWith(
+        expect.objectContaining({
+          withCredentials: true,
+        })
+      );
+    });
+
+    it('should return created cantoneira', async () => {
+      const mock = createMockCantoneira({ codigo: 100, descricao: 'New Cantoneira' });
+
+      vi.mocked(requests.requestBackend).mockResolvedValue(createMockAxiosResponse(mock));
+
+      const result = await cantoneiraService.criar(mock);
+
+      expect(result.data).toEqual(mock);
+    });
+  });
+
+  describe('atualizar', () => {
+    it('should send PUT request to /api/cantoneira', async () => {
+      vi.mocked(requests.requestBackend).mockResolvedValue(createMockAxiosResponse(mockCantoneira));
+
+      await cantoneiraService.atualizar(mockCantoneira);
+
+      expect(requests.requestBackend).toHaveBeenCalledWith(
+        expect.objectContaining({
+          method: 'PUT',
+          url: '/api/cantoneira',
+        })
+      );
+    });
+
+    it('should include cantoneira data in request body', async () => {
+      const mock = createMockCantoneira({ codigo: 123, descricao: 'Updated Cantoneira' });
+
+      vi.mocked(requests.requestBackend).mockResolvedValue(createMockAxiosResponse(mock));
+
+      await cantoneiraService.atualizar(mock);
+
+      expect(requests.requestBackend).toHaveBeenCalledWith(
+        expect.objectContaining({
+          data: mock,
+        })
+      );
+    });
+
+    it('should set withCredentials to true', async () => {
+      const mock = createMockCantoneira({ codigo: 123, descricao: 'Updated Cantoneira' });
+
+      vi.mocked(requests.requestBackend).mockResolvedValue(createMockAxiosResponse(mock));
+
+      await cantoneiraService.atualizar(mock);
+
+      expect(requests.requestBackend).toHaveBeenCalledWith(
+        expect.objectContaining({
+          withCredentials: true,
+        })
+      );
+    });
+
+    it('should return updated cantoneira', async () => {
+      const mock = createMockCantoneira({ codigo: 123, descricao: 'Updated Cantoneira' });
+
+      vi.mocked(requests.requestBackend).mockResolvedValue(createMockAxiosResponse(mock));
+
+      const result = await cantoneiraService.atualizar(mock);
+
+      expect(result.data).toEqual(mock);
+    });
+  });
+
+  describe('atualizarEmLote', () => {
+    it('should send PUT request to /api/cantoneira/atualizaremlote', async () => {
+      vi.mocked(requests.requestBackend).mockResolvedValue(createMockAxiosResponse({}));
+
+      await cantoneiraService.atualizarEmLote(123, 'descricao', 'New Description');
+
+      expect(requests.requestBackend).toHaveBeenCalledWith(
+        expect.objectContaining({
+          method: 'PUT',
+          url: '/api/cantoneira/atualizaremlote',
+        })
+      );
+    });
+
+    it('should include codigo, atributo, valor in params', async () => {
+      vi.mocked(requests.requestBackend).mockResolvedValue(createMockAxiosResponse({}));
+
+      await cantoneiraService.atualizarEmLote(456, 'tipo', 'A');
+
+      expect(requests.requestBackend).toHaveBeenCalledWith(
+        expect.objectContaining({
+          params: {
+            codigo: 456,
+            atributo: 'tipo',
+            valor: 'A',
+          },
+        })
+      );
+    });
+
+    it('should set withCredentials to true', async () => {
+      vi.mocked(requests.requestBackend).mockResolvedValue(createMockAxiosResponse({}));
+
+      await cantoneiraService.atualizarEmLote(123, 'descricao', 'value');
+
+      expect(requests.requestBackend).toHaveBeenCalledWith(
+        expect.objectContaining({
+          withCredentials: true,
+        })
+      );
+    });
+
+    it('should handle different attributes', async () => {
+      vi.mocked(requests.requestBackend).mockResolvedValue(createMockAxiosResponse({}));
+
+      await cantoneiraService.atualizarEmLote(123, 'unidade', 'KG');
+
+      expect(requests.requestBackend).toHaveBeenCalledWith(
+        expect.objectContaining({
+          params: expect.objectContaining({
+            atributo: 'unidade',
+            valor: 'KG',
+          }),
+        })
+      );
+    });
+  });
+
+  describe('substituirVersao', () => {
+    it('should send PUT request to /api/cantoneira/substituir', async () => {
+      vi.mocked(requests.requestBackend).mockResolvedValue(createMockAxiosResponse({}));
+
+      await cantoneiraService.substituirVersao(123, 456);
+
+      expect(requests.requestBackend).toHaveBeenCalledWith(
+        expect.objectContaining({
+          method: 'PUT',
+          url: '/api/cantoneira/substituir',
+        })
+      );
+    });
+
+    it('should include codigoRegistro and codigoVersao in params', async () => {
+      vi.mocked(requests.requestBackend).mockResolvedValue(createMockAxiosResponse({}));
+
+      await cantoneiraService.substituirVersao(100, 200);
+
+      expect(requests.requestBackend).toHaveBeenCalledWith(
+        expect.objectContaining({
+          params: {
+            codigoRegistro: 100,
+            codigoVersao: 200,
+          },
+        })
+      );
+    });
+
+    it('should set withCredentials to true', async () => {
+      vi.mocked(requests.requestBackend).mockResolvedValue(createMockAxiosResponse({}));
+
+      await cantoneiraService.substituirVersao(123, 456);
+
+      expect(requests.requestBackend).toHaveBeenCalledWith(
+        expect.objectContaining({
+          withCredentials: true,
+        })
+      );
+    });
+
+    it('should handle different version codes', async () => {
+      vi.mocked(requests.requestBackend).mockResolvedValue(createMockAxiosResponse({}));
+
+      await cantoneiraService.substituirVersao(999, 888);
+
+      expect(requests.requestBackend).toHaveBeenCalledWith(
+        expect.objectContaining({
+          params: {
+            codigoRegistro: 999,
+            codigoVersao: 888,
+          },
+        })
+      );
+    });
+  });
+
+  describe('inativar', () => {
+    it('should send PATCH request to /api/cantoneira/inativar', async () => {
+      vi.mocked(requests.requestBackend).mockResolvedValue(createMockAxiosResponse({}));
+
+      await cantoneiraService.inativar([123]);
+
+      expect(requests.requestBackend).toHaveBeenCalledWith(
+        expect.objectContaining({
+          method: 'PATCH',
+          url: '/api/cantoneira/inativar',
+        })
+      );
+    });
+
+    it('should include codigo array in params', async () => {
+      vi.mocked(requests.requestBackend).mockResolvedValue(createMockAxiosResponse({}));
+
+      await cantoneiraService.inativar([1, 2, 3]);
+
+      expect(requests.requestBackend).toHaveBeenCalledWith(
+        expect.objectContaining({
+          params: {
+            codigo: [1, 2, 3],
+          },
+        })
+      );
+    });
+
+    it('should set withCredentials to true', async () => {
+      vi.mocked(requests.requestBackend).mockResolvedValue(createMockAxiosResponse({}));
+
+      await cantoneiraService.inativar([123]);
+
+      expect(requests.requestBackend).toHaveBeenCalledWith(
+        expect.objectContaining({
+          withCredentials: true,
+        })
+      );
+    });
+
+    it('should use paramsSerializer with arrayFormat repeat', async () => {
+      vi.mocked(requests.requestBackend).mockResolvedValue(createMockAxiosResponse({}));
+
+      await cantoneiraService.inativar([1, 2]);
+
+      expect(requests.requestBackend).toHaveBeenCalledWith(
+        expect.objectContaining({
+          paramsSerializer: expect.any(Function),
+        })
+      );
+    });
+
+    it('should handle single codigo in array', async () => {
+      vi.mocked(requests.requestBackend).mockResolvedValue(createMockAxiosResponse({}));
+
+      await cantoneiraService.inativar([999]);
+
+      expect(requests.requestBackend).toHaveBeenCalledWith(
+        expect.objectContaining({
+          params: {
+            codigo: [999],
+          },
+        })
+      );
+    });
+
+    it('should handle multiple codigos', async () => {
+      vi.mocked(requests.requestBackend).mockResolvedValue(createMockAxiosResponse({}));
+
+      await cantoneiraService.inativar([10, 20, 30, 40, 50]);
+
+      expect(requests.requestBackend).toHaveBeenCalledWith(
+        expect.objectContaining({
+          params: {
+            codigo: [10, 20, 30, 40, 50],
+          },
+        })
+      );
+    });
+  });
+
+  describe('remover', () => {
+    it('should send DELETE request to /api/cantoneira', async () => {
+      vi.mocked(requests.requestBackend).mockResolvedValue(createMockAxiosResponse({}));
+
+      await cantoneiraService.remover([123]);
+
+      expect(requests.requestBackend).toHaveBeenCalledWith(
+        expect.objectContaining({
+          method: 'DELETE',
+          url: '/api/cantoneira',
+        })
+      );
+    });
+
+    it('should include codigo array in params', async () => {
+      vi.mocked(requests.requestBackend).mockResolvedValue(createMockAxiosResponse({}));
+
+      await cantoneiraService.remover([10, 20, 30]);
+
+      expect(requests.requestBackend).toHaveBeenCalledWith(
+        expect.objectContaining({
+          params: {
+            codigo: [10, 20, 30],
+          },
+        })
+      );
+    });
+
+    it('should set withCredentials to true', async () => {
+      vi.mocked(requests.requestBackend).mockResolvedValue(createMockAxiosResponse({}));
+
+      await cantoneiraService.remover([123]);
+
+      expect(requests.requestBackend).toHaveBeenCalledWith(
+        expect.objectContaining({
+          withCredentials: true,
+        })
+      );
+    });
+
+    it('should use paramsSerializer with arrayFormat repeat', async () => {
+      vi.mocked(requests.requestBackend).mockResolvedValue(createMockAxiosResponse({}));
+
+      await cantoneiraService.remover([1, 2, 3]);
+
+      expect(requests.requestBackend).toHaveBeenCalledWith(
+        expect.objectContaining({
+          paramsSerializer: expect.any(Function),
+        })
+      );
+    });
+
+    it('should handle empty array', async () => {
+      vi.mocked(requests.requestBackend).mockResolvedValue(createMockAxiosResponse({}));
+
+      await cantoneiraService.remover([]);
+
+      expect(requests.requestBackend).toHaveBeenCalledWith(
+        expect.objectContaining({
+          params: {
+            codigo: [],
+          },
+        })
+      );
+    });
+
+    it('should handle single deletion', async () => {
+      vi.mocked(requests.requestBackend).mockResolvedValue(createMockAxiosResponse({}));
+
+      await cantoneiraService.remover([777]);
+
+      expect(requests.requestBackend).toHaveBeenCalledWith(
+        expect.objectContaining({
+          params: {
+            codigo: [777],
+          },
+        })
+      );
+    });
+  });
+});

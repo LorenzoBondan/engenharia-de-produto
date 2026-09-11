@@ -1,0 +1,224 @@
+.home-struct-container {
+    min-height: 100vh;
+    max-width: 100vw;
+    padding: 2rem;
+    background: #E8E8E8;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    box-sizing: border-box;
+    overflow-x: hidden;
+}
+
+.home-struct-header {
+    text-align: center;
+    margin-bottom: 2rem;
+    animation: fadeInDown 0.6s ease-out;
+}
+
+.home-struct-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--color-btn-primary, #EA0404);
+    margin-bottom: 0.5rem;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.home-struct-subtitle {
+    font-size: 1.1rem;
+    color: #4a5568;
+    font-weight: 400;
+}
+
+.home-struct-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    width: 100%;
+    padding: 1rem;
+}
+
+.home-struct-card-link {
+    text-decoration: none;
+    display: block;
+}
+
+.home-struct-card {
+    position: relative;
+    background: var(--color-card-bg, #fff);
+    border: 1px solid var(--color-card-border, #d9d9d9);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    min-height: 320px;
+    cursor: pointer;
+}
+
+.home-struct-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+    border-color: var(--color-btn-primary, #EA0404);
+}
+
+.home-struct-card:hover .home-struct-card-icon-wrapper {
+    transform: scale(1.1) rotate(5deg);
+}
+
+.home-struct-card:hover .home-struct-card-button {
+    transform: translateX(5px);
+    background: linear-gradient(135deg, #c20303 0%, #EA0404 100%);
+}
+
+.home-struct-card-content {
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    height: 100%;
+}
+
+.home-struct-card-icon-wrapper {
+    width: 70px;
+    height: 70px;
+    border-radius: 16px;
+    background: linear-gradient(135deg, var(--color-btn-primary, #EA0404) 0%, var(--color-btn-secondary, #F8ABAB) 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(234, 4, 4, 0.25);
+}
+
+.home-struct-card-icon {
+    color: #ffffff;
+}
+
+.home-struct-card-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #1a202c;
+    margin: 0;
+    line-height: 1.3;
+}
+
+.home-struct-card-description {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: #4a5568;
+    flex-grow: 1;
+    margin: 0;
+}
+
+.home-struct-card-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.25rem;
+    background: linear-gradient(135deg, var(--color-btn-primary, #EA0404) 0%, var(--color-btn-secondary, #F8ABAB) 100%);
+    color: var(--color-btn-inverse, #fff);
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+    align-self: flex-start;
+    box-shadow: 0 3px 10px rgba(234, 4, 4, 0.25);
+}
+
+.home-struct-card-button svg {
+    transition: transform 0.3s ease;
+}
+
+.home-struct-card:hover .home-struct-card-button svg {
+    transform: translateX(3px);
+}
+
+/* Animations */
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.home-struct-card:nth-child(1) {
+    animation: fadeInUp 0.5s ease-out 0.1s backwards;
+}
+
+.home-struct-card:nth-child(2) {
+    animation: fadeInUp 0.5s ease-out 0.2s backwards;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .home-struct-container {
+        padding: 1.5rem;
+    }
+
+    .home-struct-title {
+        font-size: 2rem;
+    }
+
+    .home-struct-subtitle {
+        font-size: 1rem;
+    }
+
+    .home-struct-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+        padding: 0;
+    }
+
+    .home-struct-card {
+        min-height: 280px;
+    }
+
+    .home-struct-card-content {
+        padding: 1.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .home-struct-container {
+        padding: 1rem;
+    }
+
+    .home-struct-title {
+        font-size: 1.75rem;
+    }
+
+    .home-struct-card-icon-wrapper {
+        width: 60px;
+        height: 60px;
+    }
+
+    .home-struct-card-icon {
+        width: 28px;
+        height: 28px;
+    }
+}
+
+/* Adjustments for sidebar layout */
+@media (min-width: 1200px) {
+    .home-struct-container {
+        margin-left: 85px;
+        min-height: 100vh;
+    }
+}

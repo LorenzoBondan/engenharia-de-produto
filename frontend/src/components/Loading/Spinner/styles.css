@@ -1,0 +1,50 @@
+/* Spinner container */
+.spinner {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Spinner icon - rotating circle */
+.spinner-icon {
+  border: 3px solid rgba(0, 0, 0, 0.1);
+  border-top-color: var(--color-btn-primary, #EA0404);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+/* Size variants */
+.spinner-small .spinner-icon {
+  width: 16px;
+  height: 16px;
+  border-width: 2px;
+}
+
+.spinner-medium .spinner-icon {
+  width: 24px;
+  height: 24px;
+  border-width: 3px;
+}
+
+.spinner-large .spinner-icon {
+  width: 32px;
+  height: 32px;
+  border-width: 3px;
+}
+
+/* Rotation animation */
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Accessibility: Respect prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  .spinner-icon {
+    animation: none;
+  }
+}

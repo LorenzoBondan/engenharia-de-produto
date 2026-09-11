@@ -1,0 +1,650 @@
+import { describe, it, expect, beforeEach, vi } from 'vitest';
+import * as tntService from './tntService';
+import * as requests from '../utils/requests';
+import { createMockAxiosResponse } from '../tests/helpers/mockFactories';
+import { createMockTnt } from '../tests/helpers/serviceMockFactories';
+
+
+vi.mock('../utils/requests');
+
+const mockTnt = createMockTnt();
+
+describe('TntService', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  describe('pesquisarTodos', () => {
+    it('should send GET request to /api/tnt', async () => {
+      vi.mocked(requests.requestBackend).mockResolvedValue(createMockAxiosResponse([]));
+
+      await tntService.pesquisarTodos('codigo,descricao', '=,LIKE', '1,test');
+
+      expect(requests.requestBackend).toHaveBeenCalledWith(
+        expect.objectContaining({
+          method: 'GET',
+          url: '/api/tnt',
+        })
+      );
+    });
+
+    it('should include colunas, operacoes, valores in params', async () => {
+      vi.mocked(requests.requestBackend).mockResolvedValue(createMockAxiosResponse([]));
+
+      await tntService.pesquisarTodos('codigo,descricao', '=,LIKE', '1,test');
+
+      expect(requests.requestBackend).toHaveBeenCalledWith(
+        expect.objectContaining({
+          params: expect.objectContaining({
+            colunas: 'codigo,descricao',
+            operacoes: '=,LIKE',
+            valores: '1,test',
+          }),
+        })
+      );
+    });
+
+    it('should use default sort "codigo;d" when not provided', async () => {
+      vi.mocked(requests.requestBackend).mockResolvedValue(createMockAxiosResponse([]));
+
+      await tntService.pesquisarTodos('codigo', '=', '1');
+
+      expect(requests.requestBackend).toHaveBeenCalledWith(
+        expect.objectContaining({
+          params: expect.objectContaining({
+            sort: 'codigo;d',
+          }),
+        })
+      );
+    });
+
+    it('should use custom sort when provided', async () => {
+      vi.mocked(requests.requestBackend).mockResolvedValue(createMockAxiosResponse([]));
+
+      await tntService.pesquisarTodos('codigo', '=', '1', undefined, undefined, 'descricao;a');
+
+      expect(requests.requestBackend).toHaveBeenCalledWith(
+        expect.objectContaining({
+          params: expect.objectContaining({
+            sort: 'descricao;a',
+          }),
+        })
+      );
+    });
+
+    it('should include page and pageSize when provided', async () => {
+      vi.mocked(requests.requestBackend).mockResolvedValue(createMockAxiosResponse([]));
+
+      await tntService.pesquisarTodos('codigo', '=', '1', 0, 20);
+
+      expect(requests.requestBackend).toHaveBeenCalledWith(
+        expect.objectContaining({
+          params: expect.objectContaining({
+            page: 0,
+            pageSize: 20,
+          }),
+        })
+      );
+    });
+
+    it('should set withCredentials to true', async () => {
+      vi.mocked(requests.requestBackend).mockResolvedValue(createMockAxiosResponse([]));
+
+      await tntService.pesquisarTodos('codigo', '=', '1');
+
+      expect(requests.requestBackend).toHaveBeenCalledWith(
+        expect.objectContaining({
+          withCredentials: true,
+        })
+      );
+    });
+
+    it('should handle multiple search columns', async () => {
+      vi.mocked(requests.requestBackend).mockResolvedValue(createMockAxiosResponse([]));
+
+      await tntService.pesquisarTodos('codigo,descricao,tipo', '=,LIKE,=', '1,test,A');
+
+      expect(requests.requestBackend).toHaveBeenCalledWith(
+        expect.objectContaining({
+          params: expect.objectContaining({
+            colunas: 'codigo,descricao,tipo',
+            operacoes: '=,LIKE,=',
+            valores: '1,test,A',
+          }),
+        })
+      );
+    });
+
+    it('should handle pagination with different page sizes', async () => {
+      vi.mocked(requests.requestBackend).mockResolvedValue(createMockAxiosResponse([]));
+
+      await tntService.pesquisarTodos('codigo', '=', '1', 2, 50);
+
+      expect(requests.requestBackend).toHaveBeenCalledWith(
+        expect.objectContaining({
+          params: expect.objectContaining({
+            page: 2,
+            pageSize: 50,
+          }),
+        })
+      );
+    });
+
+    it('should return response data', async () => {
+      const mockData = [{ codigo: 1, descricao: 'TNT Test' }];
+      vi.mocked(requests.requestBackend).mockResolvedValue(createMockAxiosResponse(mockData));
+
+      const result = await tntService.pesquisarTodos('codigo', '=', '1');
+
+      expect(result.data).toEqual(mockData);
+    });
+  });
+
+  describe('pesquisarPorId', () => {
+    it('should send GET request to /api/tnt/:id', async () => {
+      vi.mocked(requests.requestBackend).mockResolvedValue(createMockAxiosResponse({}));
+
+      await tntService.pesquisarPorId(123);
+
+      expect(requests.requestBackend).toHaveBeenCalledWith(
+        expect.objectContaining({
+          url: '/api/tnt/123',
+        })
+      );
+    });
+
+    it('should set withCredentials to true', async () => {
+      vi.mocked(requests.requestBackend).mockResolvedValue(createMockAxiosResponse({}));
+
+      await tntService.pesquisarPorId(123);
+
+      expect(requests.requestBackend).toHaveBeenCalledWith(
+        expect.objectContaining({
+          withCredentials: true,
+        })
+      );
+    });
+
+    it('should handle different tnt IDs', async () => {
+      vi.mocked(requests.requestBackend).mockResolvedValue(createMockAxiosResponse({}));
+
+      await tntService.pesquisarPorId(999);
+
+      expect(requests.requestBackend).toHaveBeenCalledWith(
+        expect.objectContaining({
+          url: '/api/tnt/999',
+        })
+      );
+    });
+
+    it('should return tnt data', async () => {
+      vi.mocked(requests.requestBackend).mockResolvedValue(createMockAxiosResponse(mockTnt));
+
+      const result = await tntService.pesquisarPorId(123);
+
+      expect(result.data).toEqual(mockTnt);
+    });
+  });
+
+  describe('pesquisarHistorico', () => {
+    it('should send GET request to /api/tnt/historico', async () => {
+      vi.mocked(requests.requestBackend).mockResolvedValue(createMockAxiosResponse([]));
+
+      await tntService.pesquisarHistorico(123);
+
+      expect(requests.requestBackend).toHaveBeenCalledWith(
+        expect.objectContaining({
+          method: 'GET',
+          url: '/api/tnt/historico',
+        })
+      );
+    });
+
+    it('should include codigo in params', async () => {
+      vi.mocked(requests.requestBackend).mockResolvedValue(createMockAxiosResponse([]));
+
+      await tntService.pesquisarHistorico(456);
+
+      expect(requests.requestBackend).toHaveBeenCalledWith(
+        expect.objectContaining({
+          params: {
+            codigo: 456,
+          },
+        })
+      );
+    });
+
+    it('should set withCredentials to true', async () => {
+      vi.mocked(requests.requestBackend).mockResolvedValue(createMockAxiosResponse([]));
+
+      await tntService.pesquisarHistorico(123);
+
+      expect(requests.requestBackend).toHaveBeenCalledWith(
+        expect.objectContaining({
+          withCredentials: true,
+        })
+      );
+    });
+
+    it('should return historical data', async () => {
+      const mockHistory = [{ codigo: 1, data: '2024-01-01', usuario: 'user1' }];
+      vi.mocked(requests.requestBackend).mockResolvedValue(createMockAxiosResponse(mockHistory));
+
+      const result = await tntService.pesquisarHistorico(123);
+
+      expect(result.data).toEqual(mockHistory);
+    });
+  });
+
+  describe('pesquisarAtributosEditaveisEmLote', () => {
+    it('should send GET request to /api/tnt/atributoseditaveisemlote', async () => {
+      vi.mocked(requests.requestBackend).mockResolvedValue(createMockAxiosResponse([]));
+
+      await tntService.pesquisarAtributosEditaveisEmLote();
+
+      expect(requests.requestBackend).toHaveBeenCalledWith(
+        expect.objectContaining({
+          url: '/api/tnt/atributoseditaveisemlote',
+        })
+      );
+    });
+
+    it('should set withCredentials to true', async () => {
+      vi.mocked(requests.requestBackend).mockResolvedValue(createMockAxiosResponse([]));
+
+      await tntService.pesquisarAtributosEditaveisEmLote();
+
+      expect(requests.requestBackend).toHaveBeenCalledWith(
+        expect.objectContaining({
+          withCredentials: true,
+        })
+      );
+    });
+
+    it('should return editable attributes list', async () => {
+      const mockAttributes = ['descricao', 'tipo', 'unidade'];
+      vi.mocked(requests.requestBackend).mockResolvedValue(createMockAxiosResponse(mockAttributes));
+
+      const result = await tntService.pesquisarAtributosEditaveisEmLote();
+
+      expect(result.data).toEqual(mockAttributes);
+    });
+  });
+
+  describe('criar', () => {
+    it('should send POST request to /api/tnt', async () => {
+      vi.mocked(requests.requestBackend).mockResolvedValue(createMockAxiosResponse(mockTnt));
+
+      await tntService.criar(mockTnt);
+
+      expect(requests.requestBackend).toHaveBeenCalledWith(
+        expect.objectContaining({
+          method: 'POST',
+          url: '/api/tnt',
+        })
+      );
+    });
+
+    it('should include tnt data in request body', async () => {
+      vi.mocked(requests.requestBackend).mockResolvedValue(createMockAxiosResponse(mockTnt));
+
+      await tntService.criar(mockTnt);
+
+      expect(requests.requestBackend).toHaveBeenCalledWith(
+        expect.objectContaining({
+          data: mockTnt,
+        })
+      );
+    });
+
+    it('should set withCredentials to true', async () => {
+      vi.mocked(requests.requestBackend).mockResolvedValue(createMockAxiosResponse(mockTnt));
+
+      await tntService.criar(mockTnt);
+
+      expect(requests.requestBackend).toHaveBeenCalledWith(
+        expect.objectContaining({
+          withCredentials: true,
+        })
+      );
+    });
+
+    it('should return created tnt', async () => {
+      vi.mocked(requests.requestBackend).mockResolvedValue(createMockAxiosResponse(mockTnt));
+
+      const result = await tntService.criar(mockTnt);
+
+      expect(result.data).toEqual(mockTnt);
+    });
+  });
+
+  describe('atualizar', () => {
+    it('should send PUT request to /api/tnt', async () => {
+      vi.mocked(requests.requestBackend).mockResolvedValue(createMockAxiosResponse(mockTnt));
+
+      await tntService.atualizar(mockTnt);
+
+      expect(requests.requestBackend).toHaveBeenCalledWith(
+        expect.objectContaining({
+          method: 'PUT',
+          url: '/api/tnt',
+        })
+      );
+    });
+
+    it('should include tnt data in request body', async () => {
+      const mock = createMockTnt({ codigo: 123, descricao: 'Updated TNT' });
+
+      vi.mocked(requests.requestBackend).mockResolvedValue(createMockAxiosResponse(mock));
+
+      await tntService.atualizar(mock);
+
+      expect(requests.requestBackend).toHaveBeenCalledWith(
+        expect.objectContaining({
+          data: mock,
+        })
+      );
+    });
+
+    it('should set withCredentials to true', async () => {
+      const mock = createMockTnt({ codigo: 123, descricao: 'Updated TNT' });
+
+      vi.mocked(requests.requestBackend).mockResolvedValue(createMockAxiosResponse(mock));
+
+      await tntService.atualizar(mock);
+
+      expect(requests.requestBackend).toHaveBeenCalledWith(
+        expect.objectContaining({
+          withCredentials: true,
+        })
+      );
+    });
+
+    it('should return updated tnt', async () => {
+      const mock = createMockTnt({ codigo: 123, descricao: 'Updated TNT' });
+
+      vi.mocked(requests.requestBackend).mockResolvedValue(createMockAxiosResponse(mock));
+
+      const result = await tntService.atualizar(mock);
+
+      expect(result.data).toEqual(mock);
+    });
+  });
+
+  describe('atualizarEmLote', () => {
+    it('should send PUT request to /api/tnt/atualizaremlote', async () => {
+      vi.mocked(requests.requestBackend).mockResolvedValue(createMockAxiosResponse({}));
+
+      await tntService.atualizarEmLote(123, 'descricao', 'New Description');
+
+      expect(requests.requestBackend).toHaveBeenCalledWith(
+        expect.objectContaining({
+          method: 'PUT',
+          url: '/api/tnt/atualizaremlote',
+        })
+      );
+    });
+
+    it('should include codigo, atributo, valor in params', async () => {
+      vi.mocked(requests.requestBackend).mockResolvedValue(createMockAxiosResponse({}));
+
+      await tntService.atualizarEmLote(456, 'tipo', 'A');
+
+      expect(requests.requestBackend).toHaveBeenCalledWith(
+        expect.objectContaining({
+          params: {
+            codigo: 456,
+            atributo: 'tipo',
+            valor: 'A',
+          },
+        })
+      );
+    });
+
+    it('should set withCredentials to true', async () => {
+      vi.mocked(requests.requestBackend).mockResolvedValue(createMockAxiosResponse({}));
+
+      await tntService.atualizarEmLote(123, 'descricao', 'value');
+
+      expect(requests.requestBackend).toHaveBeenCalledWith(
+        expect.objectContaining({
+          withCredentials: true,
+        })
+      );
+    });
+
+    it('should handle different attributes', async () => {
+      vi.mocked(requests.requestBackend).mockResolvedValue(createMockAxiosResponse({}));
+
+      await tntService.atualizarEmLote(123, 'unidade', 'KG');
+
+      expect(requests.requestBackend).toHaveBeenCalledWith(
+        expect.objectContaining({
+          params: expect.objectContaining({
+            atributo: 'unidade',
+            valor: 'KG',
+          }),
+        })
+      );
+    });
+  });
+
+  describe('substituirVersao', () => {
+    it('should send PUT request to /api/tnt/substituir', async () => {
+      vi.mocked(requests.requestBackend).mockResolvedValue(createMockAxiosResponse({}));
+
+      await tntService.substituirVersao(123, 456);
+
+      expect(requests.requestBackend).toHaveBeenCalledWith(
+        expect.objectContaining({
+          method: 'PUT',
+          url: '/api/tnt/substituir',
+        })
+      );
+    });
+
+    it('should include codigoRegistro and codigoVersao in params', async () => {
+      vi.mocked(requests.requestBackend).mockResolvedValue(createMockAxiosResponse({}));
+
+      await tntService.substituirVersao(100, 200);
+
+      expect(requests.requestBackend).toHaveBeenCalledWith(
+        expect.objectContaining({
+          params: {
+            codigoRegistro: 100,
+            codigoVersao: 200,
+          },
+        })
+      );
+    });
+
+    it('should set withCredentials to true', async () => {
+      vi.mocked(requests.requestBackend).mockResolvedValue(createMockAxiosResponse({}));
+
+      await tntService.substituirVersao(123, 456);
+
+      expect(requests.requestBackend).toHaveBeenCalledWith(
+        expect.objectContaining({
+          withCredentials: true,
+        })
+      );
+    });
+
+    it('should handle different version codes', async () => {
+      vi.mocked(requests.requestBackend).mockResolvedValue(createMockAxiosResponse({}));
+
+      await tntService.substituirVersao(999, 888);
+
+      expect(requests.requestBackend).toHaveBeenCalledWith(
+        expect.objectContaining({
+          params: {
+            codigoRegistro: 999,
+            codigoVersao: 888,
+          },
+        })
+      );
+    });
+  });
+
+  describe('inativar', () => {
+    it('should send PATCH request to /api/tnt/inativar', async () => {
+      vi.mocked(requests.requestBackend).mockResolvedValue(createMockAxiosResponse({}));
+
+      await tntService.inativar([123]);
+
+      expect(requests.requestBackend).toHaveBeenCalledWith(
+        expect.objectContaining({
+          method: 'PATCH',
+          url: '/api/tnt/inativar',
+        })
+      );
+    });
+
+    it('should include codigo array in params', async () => {
+      vi.mocked(requests.requestBackend).mockResolvedValue(createMockAxiosResponse({}));
+
+      await tntService.inativar([1, 2, 3]);
+
+      expect(requests.requestBackend).toHaveBeenCalledWith(
+        expect.objectContaining({
+          params: {
+            codigo: [1, 2, 3],
+          },
+        })
+      );
+    });
+
+    it('should set withCredentials to true', async () => {
+      vi.mocked(requests.requestBackend).mockResolvedValue(createMockAxiosResponse({}));
+
+      await tntService.inativar([123]);
+
+      expect(requests.requestBackend).toHaveBeenCalledWith(
+        expect.objectContaining({
+          withCredentials: true,
+        })
+      );
+    });
+
+    it('should use paramsSerializer with arrayFormat repeat', async () => {
+      vi.mocked(requests.requestBackend).mockResolvedValue(createMockAxiosResponse({}));
+
+      await tntService.inativar([1, 2]);
+
+      expect(requests.requestBackend).toHaveBeenCalledWith(
+        expect.objectContaining({
+          paramsSerializer: expect.any(Function),
+        })
+      );
+    });
+
+    it('should handle single codigo in array', async () => {
+      vi.mocked(requests.requestBackend).mockResolvedValue(createMockAxiosResponse({}));
+
+      await tntService.inativar([999]);
+
+      expect(requests.requestBackend).toHaveBeenCalledWith(
+        expect.objectContaining({
+          params: {
+            codigo: [999],
+          },
+        })
+      );
+    });
+
+    it('should handle multiple codigos', async () => {
+      vi.mocked(requests.requestBackend).mockResolvedValue(createMockAxiosResponse({}));
+
+      await tntService.inativar([10, 20, 30, 40, 50]);
+
+      expect(requests.requestBackend).toHaveBeenCalledWith(
+        expect.objectContaining({
+          params: {
+            codigo: [10, 20, 30, 40, 50],
+          },
+        })
+      );
+    });
+  });
+
+  describe('remover', () => {
+    it('should send DELETE request to /api/tnt', async () => {
+      vi.mocked(requests.requestBackend).mockResolvedValue(createMockAxiosResponse({}));
+
+      await tntService.remover([123]);
+
+      expect(requests.requestBackend).toHaveBeenCalledWith(
+        expect.objectContaining({
+          method: 'DELETE',
+          url: '/api/tnt',
+        })
+      );
+    });
+
+    it('should include codigo array in params', async () => {
+      vi.mocked(requests.requestBackend).mockResolvedValue(createMockAxiosResponse({}));
+
+      await tntService.remover([10, 20, 30]);
+
+      expect(requests.requestBackend).toHaveBeenCalledWith(
+        expect.objectContaining({
+          params: {
+            codigo: [10, 20, 30],
+          },
+        })
+      );
+    });
+
+    it('should set withCredentials to true', async () => {
+      vi.mocked(requests.requestBackend).mockResolvedValue(createMockAxiosResponse({}));
+
+      await tntService.remover([123]);
+
+      expect(requests.requestBackend).toHaveBeenCalledWith(
+        expect.objectContaining({
+          withCredentials: true,
+        })
+      );
+    });
+
+    it('should use paramsSerializer with arrayFormat repeat', async () => {
+      vi.mocked(requests.requestBackend).mockResolvedValue(createMockAxiosResponse({}));
+
+      await tntService.remover([1, 2, 3]);
+
+      expect(requests.requestBackend).toHaveBeenCalledWith(
+        expect.objectContaining({
+          paramsSerializer: expect.any(Function),
+        })
+      );
+    });
+
+    it('should handle empty array', async () => {
+      vi.mocked(requests.requestBackend).mockResolvedValue(createMockAxiosResponse({}));
+
+      await tntService.remover([]);
+
+      expect(requests.requestBackend).toHaveBeenCalledWith(
+        expect.objectContaining({
+          params: {
+            codigo: [],
+          },
+        })
+      );
+    });
+
+    it('should handle single deletion', async () => {
+      vi.mocked(requests.requestBackend).mockResolvedValue(createMockAxiosResponse({}));
+
+      await tntService.remover([777]);
+
+      expect(requests.requestBackend).toHaveBeenCalledWith(
+        expect.objectContaining({
+          params: {
+            codigo: [777],
+          },
+        })
+      );
+    });
+  });
+});

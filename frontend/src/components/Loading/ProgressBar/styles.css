@@ -1,0 +1,45 @@
+/* Progress bar container */
+.progress-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  z-index: 9999;
+  overflow: hidden;
+  background-color: rgba(0, 0, 0, 0.05);
+  opacity: 1;
+  transition: opacity 150ms ease-out;
+}
+
+/* Animated progress bar fill */
+.progress-bar-fill {
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    var(--color-btn-primary, #EA0404) 0%,
+    var(--color-btn-primary, #EA0404) 50%,
+    transparent 50%,
+    transparent 100%
+  );
+  background-size: 200% 100%;
+  animation: progress-slide 1s linear infinite;
+}
+
+/* Progress bar animation */
+@keyframes progress-slide {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* Accessibility: Respect prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  .progress-bar-fill {
+    animation: none;
+    background: var(--color-btn-primary, #EA0404);
+  }
+}

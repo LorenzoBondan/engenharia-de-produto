@@ -1,0 +1,204 @@
+/* Overlay */
+.dialog-info-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    padding: 1rem;
+    animation: fadeIn 0.2s ease-out;
+}
+
+/* Modal */
+.dialog-info-modal {
+    background: var(--color-card-bg, #fff);
+    border-radius: 16px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    max-width: 480px;
+    width: 100%;
+    overflow: hidden;
+    animation: slideIn 0.3s ease-out;
+}
+
+/* Header */
+.dialog-info-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem 2rem 1.5rem;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.dialog-info-header-success {
+    background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+}
+
+.dialog-info-header-error {
+    background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+}
+
+.dialog-info-header-info {
+    background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+}
+
+.dialog-info-icon {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    margin-bottom: 1rem;
+}
+
+.dialog-info-icon-success {
+    background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+.dialog-info-icon-error {
+    background: linear-gradient(135deg, #EA0404 0%, #f87171 100%);
+    box-shadow: 0 4px 12px rgba(234, 4, 4, 0.3);
+}
+
+.dialog-info-icon-info {
+    background: linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.dialog-info-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #1a202c;
+    margin: 0;
+}
+
+/* Content */
+.dialog-info-content {
+    padding: 2rem;
+}
+
+.dialog-info-message {
+    font-size: 1rem;
+    line-height: 1.6;
+    color: #4a5568;
+    text-align: center;
+    margin: 0;
+}
+
+/* Actions */
+.dialog-info-actions {
+    padding: 1.5rem 2rem 2rem;
+    background: #f8fafc;
+}
+
+.dialog-info-btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.875rem 1.5rem;
+    border: none;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: 'Instagram Sans', sans-serif;
+    color: white;
+}
+
+.dialog-info-btn-success {
+    background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.25);
+}
+
+.dialog-info-btn-success:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.35);
+}
+
+.dialog-info-btn-error {
+    background: linear-gradient(135deg, #EA0404 0%, #f87171 100%);
+    box-shadow: 0 2px 8px rgba(234, 4, 4, 0.25);
+}
+
+.dialog-info-btn-error:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(234, 4, 4, 0.35);
+}
+
+.dialog-info-btn-info {
+    background: linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%);
+    box-shadow: 0 2px 8px rgba(59, 130, 246, 0.25);
+}
+
+.dialog-info-btn-info:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.35);
+}
+
+.dialog-info-btn:active {
+    transform: translateY(0);
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9) translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 576px) {
+    .dialog-info-modal {
+        max-width: calc(100vw - 2rem);
+    }
+
+    .dialog-info-header {
+        padding: 1.5rem 1.5rem 1rem;
+    }
+
+    .dialog-info-icon {
+        width: 60px;
+        height: 60px;
+    }
+
+    .dialog-info-title {
+        font-size: 1.25rem;
+    }
+
+    .dialog-info-content {
+        padding: 1.5rem;
+    }
+
+    .dialog-info-actions {
+        padding: 1rem 1.5rem 1.5rem;
+    }
+
+    .dialog-info-message {
+        font-size: 0.95rem;
+    }
+}

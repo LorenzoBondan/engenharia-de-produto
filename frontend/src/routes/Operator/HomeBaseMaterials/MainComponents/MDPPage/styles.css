@@ -1,0 +1,40 @@
+.base-page{
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-start;
+    width: 100%;
+    padding: 5px;
+}
+
+.base-container{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    width: 100%;
+    padding: 5px;
+}
+
+@media(min-width:576px){
+    .base-container{
+        height: 100vh;
+    }
+
+    .base-first-container{
+        margin-top: 0px;
+    }
+    
+}
+
+@media(min-width:1200px){
+    .base-page{
+        margin-top: 0;
+        margin-left: 85px;
+        align-items: center;
+        height: 100vh;
+    }
+
+    .base-container{
+        padding: 50px 0 0 50px;
+    }
+}

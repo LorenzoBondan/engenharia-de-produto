@@ -1,0 +1,19 @@
+.timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding: 0;
+  margin: 0;
+}
+
+.timelineItem {
+  list-style: none;
+}
+
+.emptyState {
+  text-align: center;
+  padding: 32px;
+  color: #666666;
+  font-style: italic;
+  font-size: 16px;
+}

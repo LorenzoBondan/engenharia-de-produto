@@ -1,0 +1,31 @@
+.item-card-container{
+    padding: 5px;
+    width: 250px;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: center;
+    margin-bottom: 10px;
+}
+
+.item-card-container:hover{
+    transform: scale(1.05);
+    transition: 0.2s ease-out;
+    cursor: pointer;
+}
+
+.item-card-image-container {
+    width: 10%;
+}
+
+.item-card-content-container{
+    width: 90%;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: flex-start;
+}
+
+.item-card-content-container h5{
+    margin-bottom: 0;
+}
